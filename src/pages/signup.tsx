@@ -7,6 +7,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { firebaseAuth, firebaseFirestore } from "@/lib/initFirebase";
 import { doc, setDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = object({
 	name: string().required("Name is required"),
@@ -36,6 +37,8 @@ const Signup = () => {
 		formState: { errors },
 	} = formMethods;
 
+	const navigate = useNavigate()
+
 	const onSubmit = async (data: InferType<typeof formSchema>) => {
 		toast.promise(
 			new Promise((resolve, reject) => {
@@ -49,6 +52,7 @@ const Signup = () => {
 						});
 						reset();
 						setLoading(false);
+						navigate("/login")
 						resolve("Signup successful");
 					})
 					.catch((error) => {
@@ -57,7 +61,7 @@ const Signup = () => {
 					});
 			}),
 			{
-				loading: "Loading...",
+				loading: "Saving...",
 				success: "Signup successful",
 				error: "Signup failed",
 			}

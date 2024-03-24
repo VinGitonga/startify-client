@@ -8,6 +8,7 @@ import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BsGithub, BsGoogle } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 import { InferType, object, string } from "yup";
 
 const formSchema = object({
@@ -33,19 +34,24 @@ const Login = () => {
 		control,
 	} = formMethods;
 
+	const navigate = useNavigate();
+
 	const onSubmit = async (data: InferType<typeof formSchema>) => {
 		toast.promise(
 			new Promise((resolve, reject) => {
 				setLoading(true);
 				signInWithEmailAndPassword(firebaseAuth, data.email, data.password)
-					.then(() => resolve("Login successful"))
+					.then(() => {
+						navigate("/dashboard");
+						resolve("Login successful");
+					})
 					.catch((error) => {
 						setLoading(false);
 						reject(error.message);
 					});
 			}),
 			{
-				loading: "Loading...",
+				loading: "Authenticating...",
 				// @ts-expect-error - fix this
 				success: (message) => {
 					reset();
